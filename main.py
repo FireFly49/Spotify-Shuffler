@@ -52,20 +52,27 @@ def get_playlists():
 
 @app.route('/process_playlist', methods=['POST'])
 def process_playlist():
-    # Get the selected playlist ID from the form
+    #bunch the calls up 
+    tracks = []
     id = request.form['playlist_id']
-    # Use the ID to fetch playlist details or perform actions
-    playlist = sp.playlist(playlist_id=id)
-    total_tracks = playlist['tracks']['total']
-    #Apply the fisher yates shuffle to reorder the playlist tracks
+    offset = 0
+    while True:
+        response = sp.playlist_tracks(playlist_id=id, offset=offset, limit=100)
+        tracks.extend(response['items'])
+        if len(tracks) >= response['total']:
+            break
+        offset += 100
+
+    # Bulk shuffle of tracks locally, reducing api calls
+    track_ids = [track['track']['id'] for track in tracks]
+    total_tracks = len(track_ids)
     for i in range(total_tracks - 1, 0, -1):
         j = randint(0,i)
-        #Swapping track positions randomly
-        sp.playlist_reorder_items(playlist_id=id,range_start=j,insert_before=i)
-        sp.playlist_reorder_items(playlist_id=id,range_start=i,insert_before=j)
+        track_ids[i], track_ids[j] = track_ids[j], track_ids[i]
+    
+    sp.playlist_replace_items(id, track_ids)
+
     return redirect(url_for('get_playlists'))
-
-
 
 @app.route('/logout')
 def logout():
