@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Playlists</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        select {
+            font-size: 16px;
+            padding: 8px;
+            margin: 10px 0;
+        }
+        button {
+            font-size: 16px;
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #2e9133;
+        }
+    </style>
+</head>
+<body>
+    <h1>Select a Playlist to shuffle</h1>
+    <form action="{{ url_for('process_playlist') }}" method="POST">
+        <select name="playlist_id">
+            {% for name, playlist_id in playlists %}
+            <option value="{{ playlist_id }}">{{ name }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit">Submit</button>
+    </form>
+</body>
+</html>
