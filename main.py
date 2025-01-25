@@ -12,7 +12,7 @@ from random import randint
 app = Flask(__name__)
 app.config['SECRET_KEY'] = secret_key
 redirect_uri = 'http://localhost:5000/callback'
-scope = 'playlist-read-private'
+scope = 'playlist-read-private playlist-read-collaborative playlist-modify-private playlist-modify-public'
 
 cache_handler = FlaskSessionCacheHandler(session)
 sp_oauth = SpotifyOAuth(
